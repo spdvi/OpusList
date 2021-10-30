@@ -4,11 +4,15 @@
  */
 package spdvi;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -18,7 +22,6 @@ import javax.swing.JFileChooser;
  * @author DevMike
  */
 public class UpdateDialog extends javax.swing.JDialog {
-    boolean profileImageChoosen = false;
     private Obra selectedObra = new Obra();
     JFileChooser fileChooser = new JFileChooser();
     BufferedImage profileBufferedImage;
@@ -30,13 +33,15 @@ public class UpdateDialog extends javax.swing.JDialog {
     public UpdateDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        selectedObra.setRegistre("");
     }
     
-    public UpdateDialog(java.awt.Frame parent, boolean modal, String registre) {
+    public UpdateDialog(java.awt.Frame parent, boolean modal, Obra selectedObra) {
         super(parent, modal);
         initComponents();
-        selectedObra.setRegistre(registre);
+        this.selectedObra = selectedObra;
+        txtRegistre.setText(selectedObra.getRegistre());
+        txtRegistre.setEnabled(false);
+        populateFields();
     }
 
     /**
@@ -209,7 +214,6 @@ public class UpdateDialog extends javax.swing.JDialog {
         getContentPane().add(jLabel6, gridBagConstraints);
 
         lblProfileImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/spdvi/noImage.png"))); // NOI18N
-        lblProfileImage.setText("jLabel7");
 
         btnSelectImage.setText("...");
         btnSelectImage.setEnabled(false);
@@ -246,10 +250,6 @@ public class UpdateDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    public Obra getSelectedObra() {
-        return this.selectedObra;
-    }
     
     private void cmbFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFormatActionPerformed
         // TODO add your handling code here:
@@ -261,8 +261,7 @@ public class UpdateDialog extends javax.swing.JDialog {
             try {
                 profileBufferedImage = ImageIO.read(fileChooser.getSelectedFile());
                 resizBufferedImage = Helper.resizeImageIcon(profileBufferedImage, lblProfileImage.getWidth(), lblProfileImage.getHeight());
-                lblProfileImage.setIcon(new ImageIcon(resizBufferedImage));
-                profileImageChoosen = true;                
+                lblProfileImage.setIcon(new ImageIcon(resizBufferedImage));              
             }
             catch(IOException ioe) {
                 ioe.printStackTrace();
@@ -271,27 +270,10 @@ public class UpdateDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSelectImageActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        selectedObra.setRegistre(txtRegistre.getText());
-        selectedObra.setTitol(txtTitol.getText());
-        selectedObra.setAny(txtAny.getText());
-        selectedObra.setFormat(cmbFormat.getSelectedItem().toString());
-        selectedObra.setAutor(txtAutor.getText());
+        DataController.updateObra(selectedObra, txtTitol.getText(), txtAny.getText(), cmbFormat.getSelectedItem().toString(), 
+                txtAutor.getText(), 
+                fileChooser.getSelectedFile() != null ? fileChooser.getSelectedFile().getAbsolutePath() : null);
 
-        if (profileImageChoosen) {
-            try {
-                File profileImageFile = new File(Constants.IMAGES_FOLDER + selectedObra.getRegistre() + ".jpg");
-                ImageIO.write(resizBufferedImage, "jpg", profileImageFile);
-                selectedObra.setPicture(profileImageFile.getName());
-            }
-            catch(IOException ioe) {
-                selectedObra.setPicture(Constants.NO_IMAGE);
-                ioe.printStackTrace();
-            }
-        }
-        else {
-            selectedObra.setPicture(Constants.NO_IMAGE);
-        }
-        ((MainForm)this.getParent()).setNewObraCreated(true);
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnUpdateActionPerformed
 
@@ -309,10 +291,36 @@ public class UpdateDialog extends javax.swing.JDialog {
 
     private void txtRegistreKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRegistreKeyPressed
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            
+            // Search for an Obra with Registre = txtRegistre.text
+            selectedObra = DataController.getObra(txtRegistre.getText());
+            populateFields();
         }
     }//GEN-LAST:event_txtRegistreKeyPressed
 
+    private void populateFields() {
+        if (selectedObra != null) {
+            txtTitol.setText(selectedObra.getTitol());
+            txtTitol.setEnabled(true);
+            txtAny.setText(selectedObra.getAny());
+            txtAny.setEnabled(true);
+            txtAutor.setText(selectedObra.getAutor());
+            txtAutor.setEnabled(true);
+            cmbFormat.setSelectedItem(selectedObra.getFormat());
+            cmbFormat.setEnabled(true);
+            if (!selectedObra.getImatge().equals(Constants.NO_IMAGE)) {
+                try {
+                    BufferedImage image = ImageIO.read(new File(Constants.IMAGES_FOLDER + selectedObra.getImatge()));
+                    BufferedImage resizedImage = Helper.resizeImageIcon(image, lblProfileImage.getWidth(), lblProfileImage.getHeight());
+                    lblProfileImage.setIcon(new ImageIcon(resizedImage));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            btnSelectImage.setEnabled(true);
+            txtRegistre.setEnabled(false);
+        }
+    }
+   
     /**
      * @param args the command line arguments
      */
@@ -375,4 +383,5 @@ public class UpdateDialog extends javax.swing.JDialog {
     private javax.swing.JTextField txtRegistre;
     private javax.swing.JTextField txtTitol;
     // End of variables declaration//GEN-END:variables
+
 }

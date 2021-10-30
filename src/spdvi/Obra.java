@@ -49,12 +49,12 @@ public class Obra {
         this.autor = autor;
     }
     
-    public String getPicture() {
-        return picture;
+    public String getImatge() {
+        return imatge;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setImatge(String imatge) {
+        this.imatge = imatge;
     }
     
     private String registre;
@@ -62,10 +62,10 @@ public class Obra {
     private String any;
     private String format;
     private String autor;
-    private String picture;
+    private String imatge;
 
     @Override
     public String toString() {
-        return registre + ": " + titol + ", " + any + " (" + format + "). " + autor + " - " + picture; 
+        return registre + ": " + titol + ", " + any + " (" + format + "). " + autor + " - " + imatge; 
     }
 }

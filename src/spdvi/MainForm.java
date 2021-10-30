@@ -18,16 +18,8 @@ import javax.swing.JList;
  * @author DevMike
  */
 public class MainForm extends javax.swing.JFrame {
-    private static final java.lang.reflect.Type LIST_OF_OBRA_TYPE = new com.google.gson.reflect.TypeToken<List<Obra>>() {}.getType();
-    private static final String jsonDataFile = System.getProperty("user.home") + "\\AppData\\Local\\OpusList\\data\\obres.json";
-    ArrayList<Obra> obras = new ArrayList<>();
     JList<Obra> lstObres;
-    
-    private boolean newObraCreated = false;
 
-
-    
-    
     /**
      * Creates new form MainForm
      */
@@ -35,6 +27,11 @@ public class MainForm extends javax.swing.JFrame {
         initComponents();
         lstObres = new JList<>();
         jScrollPane2.setViewportView(lstObres);
+        lstObres.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstObresMouseClicked(evt);
+            }
+        });
     }
 
     /**
@@ -67,6 +64,11 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         btnSaveList.setText("Save");
+        btnSaveList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveListActionPerformed(evt);
+            }
+        });
 
         mnuFile.setText("File");
 
@@ -131,25 +133,9 @@ public class MainForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public boolean isNewObraCreated() {
-        return newObraCreated;
-    }
-
-    public void setNewObraCreated(boolean newObraCreated) {
-        this.newObraCreated = newObraCreated;
-    }
-    
+   
     private void btnLoadListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadListActionPerformed
-        Gson gson = new Gson();
-        try {
-            JsonReader reader = new JsonReader(new FileReader(jsonDataFile));
-            obras = gson.fromJson(reader, LIST_OF_OBRA_TYPE);
-            UpdateView();
-
-        }
-        catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
-        }
+        UpdateView();
     }//GEN-LAST:event_btnLoadListActionPerformed
 
     private void mniExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniExitActionPerformed
@@ -159,21 +145,39 @@ public class MainForm extends javax.swing.JFrame {
     private void mniInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniInsertActionPerformed
         InsertDialog insertDialog = new InsertDialog(this, true);
         insertDialog.setVisible(true);
-        if(newObraCreated) {
-            obras.add(insertDialog.getNewObra());
-            newObraCreated = false;
-        }
-        
+        UpdateView();
+       
     }//GEN-LAST:event_mniInsertActionPerformed
 
     private void mniUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniUpdateActionPerformed
         UpdateDialog updateDialog = new UpdateDialog(this, true);
         updateDialog.setVisible(true);
+        UpdateView();
     }//GEN-LAST:event_mniUpdateActionPerformed
 
+    
+    private void btnSaveListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveListActionPerformed
+        DataController.saveObras();
+    }//GEN-LAST:event_btnSaveListActionPerformed
+
+    private void lstObresValueChanged(javax.swing.event.ListSelectionEvent evt) {
+            
+    }
+    
+    private void lstObresMouseClicked(java.awt.event.MouseEvent evt) {                                    
+        JList list = (JList)evt.getSource();
+        if (evt.getClickCount() == 2) {
+            int index = list.locationToIndex(evt.getPoint());
+            Obra selectedObra = lstObres.getModel().getElementAt(index);
+            UpdateDialog updateDialog = new UpdateDialog(this, true, selectedObra);
+            updateDialog.setVisible(true);
+            UpdateView();
+        }
+    }   
+    
     private void UpdateView() {
         DefaultListModel<Obra> listModel = new DefaultListModel<Obra>();
-        for (Obra o: obras) {
+        for (Obra o: DataController.getObras()) {
             listModel.addElement(o);
         }
         lstObres.setModel(listModel);

@@ -9,9 +9,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,8 +23,6 @@ public class InsertDialog extends javax.swing.JDialog {
     boolean profileImageChoosen = false;
     private Obra newObra = new Obra();
     JFileChooser fileChooser = new JFileChooser();
-    BufferedImage profileBufferedImage;
-    BufferedImage resizBufferedImage;
     
     /**
      * Creates new form InsertDialog
@@ -182,7 +182,6 @@ public class InsertDialog extends javax.swing.JDialog {
         getContentPane().add(jLabel6, gridBagConstraints);
 
         lblProfileImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/spdvi/noImage.png"))); // NOI18N
-        lblProfileImage.setText("jLabel7");
 
         btnSelectImage.setText("...");
         btnSelectImage.addActionListener(new java.awt.event.ActionListener() {
@@ -231,9 +230,9 @@ public class InsertDialog extends javax.swing.JDialog {
         int returnValue = fileChooser.showDialog(this, "Open");
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             try {
-                profileBufferedImage = ImageIO.read(fileChooser.getSelectedFile());
-                resizBufferedImage = Helper.resizeImageIcon(profileBufferedImage, lblProfileImage.getWidth(), lblProfileImage.getHeight());
-                lblProfileImage.setIcon(new ImageIcon(resizBufferedImage));
+                BufferedImage profileBufferedImage = ImageIO.read(fileChooser.getSelectedFile());;
+                BufferedImage resizedBufferedImage = Helper.resizeImageIcon(profileBufferedImage, lblProfileImage.getWidth(), lblProfileImage.getHeight());;
+                lblProfileImage.setIcon(new ImageIcon(resizedBufferedImage));
                 profileImageChoosen = true;                
             }
             catch(IOException ioe) {
@@ -249,21 +248,20 @@ public class InsertDialog extends javax.swing.JDialog {
         newObra.setFormat(cmbFormat.getSelectedItem().toString());
         newObra.setAutor(txtAutor.getText());
 
-        if (profileImageChoosen) {
-            try {
-                File profileImageFile = new File(Constants.IMAGES_FOLDER + newObra.getRegistre() + ".jpg");
-                ImageIO.write(resizBufferedImage, "jpg", profileImageFile);
-                newObra.setPicture(profileImageFile.getName());
+        try {
+            if (profileImageChoosen) {
+                DataController.insertObra(newObra, fileChooser.getSelectedFile().getAbsolutePath());
             }
-            catch(IOException ioe) {
-                newObra.setPicture(Constants.NO_IMAGE);
-                ioe.printStackTrace();
+            else {
+                DataController.insertObra(newObra, Constants.NO_IMAGE);
             }
         }
-        else {
-            newObra.setPicture(Constants.NO_IMAGE);
+        catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            ex.printStackTrace();
         }
-        ((MainForm)this.getParent()).setNewObraCreated(true);
+
+//        ((MainForm)this.getParent()).setNewObraCreated(true);
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnInsertActionPerformed
 

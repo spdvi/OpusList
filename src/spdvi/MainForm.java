@@ -22,6 +22,12 @@ public class MainForm extends javax.swing.JFrame {
     private static final String jsonDataFile = System.getProperty("user.home") + "\\AppData\\Local\\OpusList\\data\\obres.json";
     ArrayList<Obra> obras = new ArrayList<>();
     JList<Obra> lstObres;
+    
+    private boolean newObraCreated = false;
+
+
+    
+    
     /**
      * Creates new form MainForm
      */
@@ -44,8 +50,11 @@ public class MainForm extends javax.swing.JFrame {
         btnSaveList = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        mnuFile = new javax.swing.JMenu();
+        mniExit = new javax.swing.JMenuItem();
+        mnuEdit = new javax.swing.JMenu();
+        mniInsert = new javax.swing.JMenuItem();
+        mniUpdate = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Opus Manager");
@@ -59,11 +68,37 @@ public class MainForm extends javax.swing.JFrame {
 
         btnSaveList.setText("Save");
 
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
+        mnuFile.setText("File");
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        mniExit.setText("Exit");
+        mniExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniExitActionPerformed(evt);
+            }
+        });
+        mnuFile.add(mniExit);
+
+        jMenuBar1.add(mnuFile);
+
+        mnuEdit.setText("Edit");
+
+        mniInsert.setText("Insert");
+        mniInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniInsertActionPerformed(evt);
+            }
+        });
+        mnuEdit.add(mniInsert);
+
+        mniUpdate.setText("Update");
+        mniUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniUpdateActionPerformed(evt);
+            }
+        });
+        mnuEdit.add(mniUpdate);
+
+        jMenuBar1.add(mnuEdit);
 
         setJMenuBar(jMenuBar1);
 
@@ -96,6 +131,14 @@ public class MainForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public boolean isNewObraCreated() {
+        return newObraCreated;
+    }
+
+    public void setNewObraCreated(boolean newObraCreated) {
+        this.newObraCreated = newObraCreated;
+    }
+    
     private void btnLoadListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadListActionPerformed
         Gson gson = new Gson();
         try {
@@ -108,6 +151,25 @@ public class MainForm extends javax.swing.JFrame {
             fnfe.printStackTrace();
         }
     }//GEN-LAST:event_btnLoadListActionPerformed
+
+    private void mniExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_mniExitActionPerformed
+
+    private void mniInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniInsertActionPerformed
+        InsertDialog insertDialog = new InsertDialog(this, true);
+        insertDialog.setVisible(true);
+        if(newObraCreated) {
+            obras.add(insertDialog.getNewObra());
+            newObraCreated = false;
+        }
+        
+    }//GEN-LAST:event_mniInsertActionPerformed
+
+    private void mniUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniUpdateActionPerformed
+        UpdateDialog updateDialog = new UpdateDialog(this, true);
+        updateDialog.setVisible(true);
+    }//GEN-LAST:event_mniUpdateActionPerformed
 
     private void UpdateView() {
         DefaultListModel<Obra> listModel = new DefaultListModel<Obra>();
@@ -155,10 +217,13 @@ public class MainForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoadList;
     private javax.swing.JButton btnSaveList;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JMenuItem mniExit;
+    private javax.swing.JMenuItem mniInsert;
+    private javax.swing.JMenuItem mniUpdate;
+    private javax.swing.JMenu mnuEdit;
+    private javax.swing.JMenu mnuFile;
     // End of variables declaration//GEN-END:variables
 
 }

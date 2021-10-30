@@ -52,6 +52,8 @@ public class MainForm extends javax.swing.JFrame {
         mnuEdit = new javax.swing.JMenu();
         mniInsert = new javax.swing.JMenuItem();
         mniUpdate = new javax.swing.JMenuItem();
+        mniDelete = new javax.swing.JMenuItem();
+        mnuHelp = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Opus Manager");
@@ -100,7 +102,18 @@ public class MainForm extends javax.swing.JFrame {
         });
         mnuEdit.add(mniUpdate);
 
+        mniDelete.setText("Delete");
+        mniDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniDeleteActionPerformed(evt);
+            }
+        });
+        mnuEdit.add(mniDelete);
+
         jMenuBar1.add(mnuEdit);
+
+        mnuHelp.setText("Help");
+        jMenuBar1.add(mnuHelp);
 
         setJMenuBar(jMenuBar1);
 
@@ -159,6 +172,12 @@ public class MainForm extends javax.swing.JFrame {
     private void btnSaveListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveListActionPerformed
         DataController.saveObras();
     }//GEN-LAST:event_btnSaveListActionPerformed
+
+    private void mniDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniDeleteActionPerformed
+        DeleteDialog deleteDialog = new DeleteDialog(this, true);
+        deleteDialog.setVisible(true);
+        UpdateView();
+    }//GEN-LAST:event_mniDeleteActionPerformed
 
     private void lstObresValueChanged(javax.swing.event.ListSelectionEvent evt) {
             
@@ -223,11 +242,13 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JButton btnSaveList;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JMenuItem mniDelete;
     private javax.swing.JMenuItem mniExit;
     private javax.swing.JMenuItem mniInsert;
     private javax.swing.JMenuItem mniUpdate;
     private javax.swing.JMenu mnuEdit;
     private javax.swing.JMenu mnuFile;
+    private javax.swing.JMenu mnuHelp;
     // End of variables declaration//GEN-END:variables
 
 }

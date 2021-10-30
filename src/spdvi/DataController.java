@@ -136,4 +136,15 @@ public class DataController {
             selectedObra.setImatge(Constants.NO_IMAGE);
         }
     }
+
+    static void deleteObra(Obra selectedObra) {
+        if (!Constants.NO_IMAGE.equals(selectedObra.getImatge())) {
+            File fileToDelete = new File(Constants.IMAGES_FOLDER + selectedObra.getImatge());
+            if (fileToDelete.exists()) {
+                fileToDelete.delete();
+            }
+        }
+        obras.remove(selectedObra);
+        saveObras();
+    }
 }

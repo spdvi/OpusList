@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package spdvi;
+package main.java.spdvi;
 
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
@@ -86,7 +86,7 @@ public class DeleteDialog extends javax.swing.JDialog {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         Obra selectedObra = (Obra)cmbObras.getSelectedItem();
-        DataController.deleteObra(selectedObra);
+        DataAccess.deleteObra(selectedObra);
         
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -97,7 +97,7 @@ public class DeleteDialog extends javax.swing.JDialog {
 
     private void UpdateView() {
         DefaultComboBoxModel<Obra> comboBoxModel = new DefaultComboBoxModel<>();
-        for (Obra o: DataController.getObras()) {
+        for (Obra o: DataAccess.getObras()) {
             comboBoxModel.addElement(o);
         }
         cmbObras.setModel(comboBoxModel);

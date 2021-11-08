@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package spdvi;
+package main.java.spdvi;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -32,6 +32,8 @@ public class MainForm extends javax.swing.JFrame {
                 lstObresMouseClicked(evt);
             }
         });
+        
+        System.out.println( System.identityHashCode(this));
     }
 
     /**
@@ -170,7 +172,7 @@ public class MainForm extends javax.swing.JFrame {
 
     
     private void btnSaveListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveListActionPerformed
-        DataController.saveObras();
+        DataAccess.saveObras();
     }//GEN-LAST:event_btnSaveListActionPerformed
 
     private void mniDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniDeleteActionPerformed
@@ -196,7 +198,7 @@ public class MainForm extends javax.swing.JFrame {
     
     private void UpdateView() {
         DefaultListModel<Obra> listModel = new DefaultListModel<Obra>();
-        for (Obra o: DataController.getObras()) {
+        for (Obra o: DataAccess.getObras()) {
             listModel.addElement(o);
         }
         lstObres.setModel(listModel);

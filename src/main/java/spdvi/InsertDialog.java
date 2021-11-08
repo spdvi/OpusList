@@ -2,46 +2,43 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package spdvi;
+package main.java.spdvi;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.URL;
+import java.nio.file.Files;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author DevMike
  */
-public class UpdateDialog extends javax.swing.JDialog {
-    private Obra selectedObra = new Obra();
+public class InsertDialog extends javax.swing.JDialog {
+    boolean profileImageChoosen = false;
+    private Obra newObra = new Obra();
     JFileChooser fileChooser = new JFileChooser();
-    BufferedImage profileBufferedImage;
-    BufferedImage resizBufferedImage;
     
     /**
      * Creates new form InsertDialog
      */
-    public UpdateDialog(java.awt.Frame parent, boolean modal) {
+    public InsertDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-    }
-    
-    public UpdateDialog(java.awt.Frame parent, boolean modal, Obra selectedObra) {
-        super(parent, modal);
-        initComponents();
-        this.selectedObra = selectedObra;
-        txtRegistre.setText(selectedObra.getRegistre());
-        txtRegistre.setEnabled(false);
-        populateFields();
+        newObra.setRegistre("");
+        
+        JFrame mainFrame = new JFrame();
+        JFrame trueMainFrame = (JFrame)this.getParent();
+        System.out.println(System.identityHashCode(mainFrame));
+        System.out.println(System.identityHashCode(trueMainFrame));
+        
     }
 
     /**
@@ -66,7 +63,7 @@ public class UpdateDialog extends javax.swing.JDialog {
         txtAutor = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         btnCancel = new javax.swing.JButton();
-        btnUpdate = new javax.swing.JButton();
+        btnInsert = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         lblProfileImage = new javax.swing.JLabel();
@@ -88,23 +85,9 @@ public class UpdateDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(jLabel1, gridBagConstraints);
 
-        txtRegistre.setText("Ref. + Intro para buscar");
         txtRegistre.setMaximumSize(new java.awt.Dimension(200, 24));
         txtRegistre.setMinimumSize(new java.awt.Dimension(200, 24));
         txtRegistre.setPreferredSize(new java.awt.Dimension(200, 24));
-        txtRegistre.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtRegistreFocusGained(evt);
-            }
-        });
-        txtRegistre.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtRegistreKeyPressed(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtRegistreKeyTyped(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -117,8 +100,6 @@ public class UpdateDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(jLabel2, gridBagConstraints);
-
-        txtTitol.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -131,8 +112,6 @@ public class UpdateDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(jLabel3, gridBagConstraints);
-
-        txtAny.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -147,7 +126,6 @@ public class UpdateDialog extends javax.swing.JDialog {
         getContentPane().add(jLabel4, gridBagConstraints);
 
         cmbFormat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pintura", "Escultura", "Fotografia" }));
-        cmbFormat.setEnabled(false);
         cmbFormat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbFormatActionPerformed(evt);
@@ -165,8 +143,6 @@ public class UpdateDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(jLabel5, gridBagConstraints);
-
-        txtAutor.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 8;
@@ -187,17 +163,17 @@ public class UpdateDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
         jPanel1.add(btnCancel, gridBagConstraints);
 
-        btnUpdate.setText("Update");
-        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+        btnInsert.setText("Insert");
+        btnInsert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUpdateActionPerformed(evt);
+                btnInsertActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
-        jPanel1.add(btnUpdate, gridBagConstraints);
+        jPanel1.add(btnInsert, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -213,10 +189,9 @@ public class UpdateDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(jLabel6, gridBagConstraints);
 
-        lblProfileImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/spdvi/noImage.png"))); // NOI18N
+        lblProfileImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main/resources/images/noImage.png"))); // NOI18N
 
         btnSelectImage.setText("...");
-        btnSelectImage.setEnabled(false);
         btnSelectImage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSelectImageActionPerformed(evt);
@@ -250,6 +225,10 @@ public class UpdateDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public Obra getNewObra() {
+        return this.newObra;
+    }
     
     private void cmbFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbFormatActionPerformed
         // TODO add your handling code here:
@@ -259,9 +238,10 @@ public class UpdateDialog extends javax.swing.JDialog {
         int returnValue = fileChooser.showDialog(this, "Open");
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             try {
-                profileBufferedImage = ImageIO.read(fileChooser.getSelectedFile());
-                resizBufferedImage = Helper.resizeImageIcon(profileBufferedImage, lblProfileImage.getWidth(), lblProfileImage.getHeight());
-                lblProfileImage.setIcon(new ImageIcon(resizBufferedImage));              
+                BufferedImage profileBufferedImage = ImageIO.read(fileChooser.getSelectedFile());;
+                BufferedImage resizedBufferedImage = Helper.resizeImageIcon(profileBufferedImage, lblProfileImage.getWidth(), lblProfileImage.getHeight());;
+                lblProfileImage.setIcon(new ImageIcon(resizedBufferedImage));
+                profileImageChoosen = true;                
             }
             catch(IOException ioe) {
                 ioe.printStackTrace();
@@ -269,58 +249,46 @@ public class UpdateDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnSelectImageActionPerformed
 
-    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        DataController.updateObra(selectedObra, txtTitol.getText(), txtAny.getText(), cmbFormat.getSelectedItem().toString(), 
-                txtAutor.getText(), 
-                fileChooser.getSelectedFile() != null ? fileChooser.getSelectedFile().getAbsolutePath() : null);
+    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
+        
+        if ( registreObraExists() ) {
+            newObra.setRegistre(txtRegistre.getText());            
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "Error: an obra with register code " + txtRegistre.getText() + " already exists.");
+            return;
+        }
+        
+        newObra.setTitol(txtTitol.getText());
+        newObra.setAny(txtAny.getText());
+        newObra.setFormat(cmbFormat.getSelectedItem().toString());
+        newObra.setAutor(txtAutor.getText());
 
+        try {
+            if (profileImageChoosen) {
+                DataAccess.insertObra(newObra, fileChooser.getSelectedFile().getAbsolutePath());
+            }
+            else {
+                DataAccess.insertObra(newObra, Constants.NO_IMAGE);
+            }
+        }
+        catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            ex.printStackTrace();
+        }
+
+//        ((MainForm)this.getParent()).setNewObraCreated(true);
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-    }//GEN-LAST:event_btnUpdateActionPerformed
+    }//GEN-LAST:event_btnInsertActionPerformed
 
+    private boolean registreObraExists() {
+        return false;
+    }
+    
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_btnCancelActionPerformed
 
-    private void txtRegistreFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRegistreFocusGained
-        txtRegistre.selectAll();
-    }//GEN-LAST:event_txtRegistreFocusGained
-
-    private void txtRegistreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRegistreKeyTyped
-
-    }//GEN-LAST:event_txtRegistreKeyTyped
-
-    private void txtRegistreKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRegistreKeyPressed
-        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            // Search for an Obra with Registre = txtRegistre.text
-            selectedObra = DataController.getObra(txtRegistre.getText());
-            populateFields();
-        }
-    }//GEN-LAST:event_txtRegistreKeyPressed
-
-    private void populateFields() {
-        if (selectedObra != null) {
-            txtTitol.setText(selectedObra.getTitol());
-            txtTitol.setEnabled(true);
-            txtAny.setText(selectedObra.getAny());
-            txtAny.setEnabled(true);
-            txtAutor.setText(selectedObra.getAutor());
-            txtAutor.setEnabled(true);
-            cmbFormat.setSelectedItem(selectedObra.getFormat());
-            cmbFormat.setEnabled(true);
-            if (!selectedObra.getImatge().equals(Constants.NO_IMAGE)) {
-                try {
-                    BufferedImage image = ImageIO.read(new File(Constants.IMAGES_FOLDER + selectedObra.getImatge()));
-                    BufferedImage resizedImage = Helper.resizeImageIcon(image, lblProfileImage.getWidth(), lblProfileImage.getHeight());
-                    lblProfileImage.setIcon(new ImageIcon(resizedImage));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            btnSelectImage.setEnabled(true);
-            txtRegistre.setEnabled(false);
-        }
-    }
-   
     /**
      * @param args the command line arguments
      */
@@ -338,21 +306,20 @@ public class UpdateDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UpdateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InsertDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UpdateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InsertDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UpdateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InsertDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UpdateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InsertDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                UpdateDialog dialog = new UpdateDialog(new javax.swing.JFrame(), true);
+                InsertDialog dialog = new InsertDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -366,8 +333,8 @@ public class UpdateDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnInsert;
     private javax.swing.JButton btnSelectImage;
-    private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cmbFormat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

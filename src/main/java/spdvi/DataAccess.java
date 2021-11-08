@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package spdvi;
+package main.java.spdvi;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
  *
  * @author DevMike
  */
-public class DataController {
+public class DataAccess {
     private static ArrayList<Obra> obras = new ArrayList<>();
     static boolean obrasLoaded = false;
     
